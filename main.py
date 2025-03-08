@@ -25,7 +25,7 @@ def main():
 
     print("Initial Board:")
     print(board_state)
-    #print(np_board_state)
+    print(np_board_state)
 
 
 if __name__ == "__main__":
