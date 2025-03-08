@@ -1,10 +1,11 @@
 import time
 from player import Player
 import minimax
+import numpy as np
 
 
 class Tukvnanawopi:
-    def __init__(self, player: Player, time_limit: float, state: list[list[str]]):
+    def __init__(self, player: Player, time_limit: float, state: np.ndarray):
         self.player = player
         self.time_limit = time_limit
         self.start_time = None
@@ -15,6 +16,11 @@ class Tukvnanawopi:
         # return the best move
 
     def minimax(state, depth, alpha, beta, maximizing_player):
+        '''
+        Purpose: The minimax function will explore the state space and find the best possible move for
+        Input:
+        Output
+        '''
         if depth == 0 or game over in position # add terminal state verification, later on possibly implement a time constraint
             return evaluation of position
 
