@@ -31,7 +31,7 @@ class Tukvnanawopi:
         return
 
     def check_moves(self, state, rows, cols, player):
-        # check is a move is possible, given the state of the board, rows of the player, and columns of the player
+        # check if a move is possible, given the state of the board, rows of the player, and columns of the player
         count = 0
         for i in range(len(rows)):
             new_state = state.copy()
@@ -59,7 +59,7 @@ class Tukvnanawopi:
                 print(new_state)
             # diagonal moves
             elif self.is_within_bounds(rows[count] - 1, cols[count] - 1, state) and state[rows[count] - 1, cols[count] - 1] == "O":
-                new_state[rows[count] - 1, cols[count] - 1] = "R"
+                new_state[rows[count] - 1, cols[count] - 1] = player
                 new_state[rows[count], cols[count]] = "O"
                 print("Possible State:")
                 print(new_state)
