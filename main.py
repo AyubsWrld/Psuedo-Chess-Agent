@@ -1,5 +1,5 @@
 import sys
-#from tukvnanawopi import Tukvnanawopi
+from tukvnanawopi import Tukvnanawopi
 from player import Player
 import numpy as np
 
@@ -20,12 +20,11 @@ def main():
 
     np_board_state = np.array(board_state)
 
-    #player = Player.BLACK if player_char == 'B' else Player.WHITE
-    #game = Tukvnanawopi(player=player, time_limit=10, state=board_state)
+    player = Player.BLACK if player_char == 'B' else Player.WHITE
+    game = Tukvnanawopi(player=player, time_limit=10, state=board_state)
 
     print("Initial Board:")
     print(board_state)
-    print(np_board_state)
 
 
 if __name__ == "__main__":
