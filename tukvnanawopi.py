@@ -16,7 +16,7 @@ class Tukvnanawopi:
         # return the best move
         pass
 
-    def minimax(state: np.ndarray, depth: int, alpha: float = -np.inf, beta: float = np.inf, maximizing_player: bool) -> int:
+    def minimax(state: np.ndarray, depth: int,  maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
         '''
         Purpose: The minimax function will explore the state space and find the best possible move for the maximizing
         or minimizing player, as given in the function input.
