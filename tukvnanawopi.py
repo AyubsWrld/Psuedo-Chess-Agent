@@ -1,20 +1,88 @@
 import time
 from player import Player
-import minimax
 import numpy as np
 
 
 class Tukvnanawopi:
+
     def __init__(self, player: Player, time_limit: float, state: np.ndarray):
         self.player = player
         self.time_limit = time_limit
         self.start_time = None
         self.state = state
 
-    def search_best_move(self) -> Move:
+    def search_best_move(self):
         # call minimax algorithm in minimax.py file
         # return the best move
-        pass
+        return
+
+    def possible_states(self, state, player: Player):
+        # generate children of the current state
+        if player == "W":
+            x = np.where(state == "W")
+            rows = x[0] # rows where there is a W
+            cols = x[1] # cols where there is a W
+            self.check_moves(state, rows, cols, player)
+        if player == "B":
+            x = np.where(state == "B")
+            rows = x[0] # rows where there is a B
+            cols = x[1] # cols where there is a B
+            self.check_moves(state, rows, cols, player)
+        return
+
+    def check_moves(self, state, rows, cols, player):
+        # check is a move is possible, given the state of the board, rows of the player, and columns of the player
+        count = 0
+        for i in range(len(rows)):
+            new_state = state.copy()
+            # vertical moves
+            if self.is_within_bounds(rows[count] - 2, cols[count], state) and state[rows[count] - 2, cols[count]] == "O":
+                new_state[rows[count] - 2, cols[count]] = player
+                new_state[rows[count], cols[count]] = "O"
+                print("Possible State:")
+                print(new_state)
+            elif self.is_within_bounds(rows[count] + 2, cols[count], state) and state[rows[count] + 2, cols[count]] == "O":
+                new_state[rows[count] + 2, cols[count]] = player
+                new_state[rows[count], cols[count]] = "O"
+                print("Possible State:")
+                print(new_state)
+            # horizontal moves
+            elif self.is_within_bounds(rows[count], cols[count] - 2, state) and state[rows[count], cols[count] - 2] == "O":
+                new_state[rows[count], cols[count] - 2] = player
+                new_state[rows[count], cols[count]] = "O"
+                print("Possible State:")
+                print(new_state)
+            elif self.is_within_bounds(rows[count], cols[count] + 2, state) and state[rows[count], cols[count] + 2] == "O":
+                new_state[rows[count], cols[count] + 2] = player
+                new_state[rows[count], cols[count]] = "O"
+                print("Possible State:")
+                print(new_state)
+            # diagonal moves
+            elif self.is_within_bounds(rows[count] - 1, cols[count] - 1, state) and state[rows[count] - 1, cols[count] - 1] == "O":
+                new_state[rows[count] - 1, cols[count] - 1] = "R"
+                new_state[rows[count], cols[count]] = "O"
+                print("Possible State:")
+                print(new_state)
+            elif self.is_within_bounds(rows[count] - 1, cols[count] + 1, state) and state[rows[count] - 1, cols[count] + 1] == "O":
+                new_state[rows[count] - 1, cols[count] + 1] = player
+                new_state[rows[count], cols[count]] = "O"
+                print("Possible State:")
+                print(new_state)
+            elif self.is_within_bounds(rows[count] + 1, cols[count] - 1, state) and state[rows[count] + 1, cols[count] - 1] == "O":
+                new_state[rows[count] + 1, cols[count] - 1] = player
+                new_state[rows[count], cols[count]] = "O"
+                print("Possible State:")
+                print(new_state)
+            elif self.is_within_bounds(rows[count] + 1, cols[count] + 1, state) and state[rows[count] + 1, cols[count] + 1] == "O":
+                new_state[rows[count] + 1, cols[count] + 1] = player
+                new_state[rows[count], cols[count]] = "O"
+                print("Possible State:")
+                print(new_state)
+            count += 1
+        return
+    
+    def is_within_bounds(self, row, col, state):
+        return 0 <= row < state.shape[0] and 0 <= col < state.shape[1]
 
     def minimax(state: np.ndarray, depth: int,  maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
         '''
@@ -31,7 +99,8 @@ class Tukvnanawopi:
         move on row 5 will be represented as C5-E5
 
         Known Bugs/Problems: At the moment this is completely pseudocode. need various functions implemented by classmat
-        es before I can proceed.
+        es before I can proceed. '''
+        
         '''
         if depth == 0 or game over in position # add terminal state verification, later on possibly implement a time constraint
             return evaluation of position
@@ -42,7 +111,7 @@ class Tukvnanawopi:
                 eval = self.minimax(child state, depth-1, alpha, beta, false)
                 maxEval = max(maxEval, eval)
                 alpha = max(alpha, eval)
-                if beta <= alpha
+                if beta <= alpha:
                     break
             return maxEval
         
@@ -54,16 +123,16 @@ class Tukvnanawopi:
                 beta = min(beta, eval)
                 if beta <= alpha:
                     break
-            return maxEval
+            return maxEval '''
 
-    def change_states(self, state: list[list[str]], player: Player) -> list[list[str]]:
-        # generate children of the current state
-
-    def is_terminal(self, state: list[list[str]], player: Player) -> bool:
+    def is_terminal(self, state, player: Player) -> bool:
         # is end of game
+        return
 
-    def evaluate(self, state: list[list[str]]) -> float:
+    def evaluate(self, state) -> float:
         # heuristic
+        return
 
-    def utility(self, state: list[list[str]]) -> int:
+    def utility(self, state) -> int:
         # -1, 0 or 1
+        return
