@@ -31,53 +31,47 @@ class Tukvnanawopi:
         return
 
     def check_moves(self, state, rows, cols, player):
-        # check if a move is possible, given the state of the board, rows of the player, and columns of the player
+        # check all possible moves for the current player
+        # make a move based on the inputed rows and cols
+        def make_move(new_state, row, col):
+            new_state[row, col] = player
+            new_state[rows[count],cols[count]] = "O"
+            print("Possible State:")
+            print(new_state)
+        # make a capture based on the inputed rows and cols
+        def make_capture(new_state, move_row, move_col, capture_row, capture_col):
+            new_state[capture_row, capture_col] = player
+            new_state[move_row, move_col] = "O"
+            new_state[rows[count],cols[count]] = "O"
+            print("Possible State:")
+            print(new_state)
+        # get the opposite of the current player
+        def get_opponent():
+            if player == "W":
+                opponent = "B"
+            else:
+                opponent = "W"
+            return opponent
+        
         count = 0
+        moves = [(-2, 0), (2, 0), (0, -2), (0, 2), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+        opponent = get_opponent()
         for i in range(len(rows)):
             new_state = state.copy()
-            # vertical moves
-            if self.is_within_bounds(rows[count] - 2, cols[count], state) and state[rows[count] - 2, cols[count]] == "O":
-                new_state[rows[count] - 2, cols[count]] = player
-                new_state[rows[count], cols[count]] = "O"
-                print("Possible State:")
-                print(new_state)
-            elif self.is_within_bounds(rows[count] + 2, cols[count], state) and state[rows[count] + 2, cols[count]] == "O":
-                new_state[rows[count] + 2, cols[count]] = player
-                new_state[rows[count], cols[count]] = "O"
-                print("Possible State:")
-                print(new_state)
-            # horizontal moves
-            elif self.is_within_bounds(rows[count], cols[count] - 2, state) and state[rows[count], cols[count] - 2] == "O":
-                new_state[rows[count], cols[count] - 2] = player
-                new_state[rows[count], cols[count]] = "O"
-                print("Possible State:")
-                print(new_state)
-            elif self.is_within_bounds(rows[count], cols[count] + 2, state) and state[rows[count], cols[count] + 2] == "O":
-                new_state[rows[count], cols[count] + 2] = player
-                new_state[rows[count], cols[count]] = "O"
-                print("Possible State:")
-                print(new_state)
-            # diagonal moves
-            elif self.is_within_bounds(rows[count] - 1, cols[count] - 1, state) and state[rows[count] - 1, cols[count] - 1] == "O":
-                new_state[rows[count] - 1, cols[count] - 1] = player
-                new_state[rows[count], cols[count]] = "O"
-                print("Possible State:")
-                print(new_state)
-            elif self.is_within_bounds(rows[count] - 1, cols[count] + 1, state) and state[rows[count] - 1, cols[count] + 1] == "O":
-                new_state[rows[count] - 1, cols[count] + 1] = player
-                new_state[rows[count], cols[count]] = "O"
-                print("Possible State:")
-                print(new_state)
-            elif self.is_within_bounds(rows[count] + 1, cols[count] - 1, state) and state[rows[count] + 1, cols[count] - 1] == "O":
-                new_state[rows[count] + 1, cols[count] - 1] = player
-                new_state[rows[count], cols[count]] = "O"
-                print("Possible State:")
-                print(new_state)
-            elif self.is_within_bounds(rows[count] + 1, cols[count] + 1, state) and state[rows[count] + 1, cols[count] + 1] == "O":
-                new_state[rows[count] + 1, cols[count] + 1] = player
-                new_state[rows[count], cols[count]] = "O"
-                print("Possible State:")
-                print(new_state)
+            for move in moves:
+                # keep track of the col and row for the move
+                move_row, move_col = rows[count] + move[0], cols[count] + move[1]
+                # check if the move is within the board and if the space is empty
+                if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == "O":
+                    make_move(new_state, move_row, move_col)
+                # if the move tile is already occupied, check if it is the opponent's tile
+                elif self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
+                    # multiply the rows and columns by 2 to get the capture position (to leap over the opponent's piece)
+                    capture = (move[0]*2, move[1]*2)
+                    capture_row, capture_col = rows[count] + capture[0], cols[count] + capture[1]
+                    # check if the capture position is within the board and if the space is empty
+                    if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
+                        make_capture(new_state, move_row, move_col, capture_row, capture_col)
             count += 1
         return
     
