@@ -126,8 +126,43 @@ class Tukvnanawopi:
             return maxEval '''
 
     def is_terminal(self, state, player: Player) -> bool:
-        # is end of game
-        return
+
+        white_pieces = np.count_nonzero(state == "W")
+        black_pieces = np.count_nonzero(state == "B")
+        
+        if white_pieces == 0 or black_pieces == 0:
+            return True
+        
+        has_valid_moves = False
+        
+        if player == "W":
+            positions = np.where(state == "W")
+        else:
+            positions = np.where(state == "B")
+        
+        rows = positions[0]
+        cols = positions[1]
+        
+        for i in range(len(rows)):
+            row, col = rows[i], cols[i]
+            
+            directions = [
+                (-2, 0), (2, 0), (0, -2), (0, 2),  # Vertical and horizontal jumps ( gotta check validity )
+                (-1, -1), (-1, 1), (1, -1), (1, 1),  # Diagonal moves ( gotta check validity ) 
+                # Could add jump captures here if needed
+            ]
+            
+            for dr, dc in directions:
+                new_row, new_col = row + dr, col + dc
+                if self.is_within_bounds(new_row, new_col, state) and state[new_row, new_col] == "O":
+                    has_valid_moves = True
+                    break
+                    
+            if has_valid_moves:
+                break
+
+        # If current player has no valid moves, the game is also over
+        return (white_pieces == 0 or black_pieces == 0 or not has_valid_moves)
 
     def evaluate(self, state) -> float:
         # heuristic
