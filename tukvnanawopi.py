@@ -10,6 +10,8 @@ class Tukvnanawopi:
         self.time_limit = time_limit
         self.start_time = None
         self.state = state
+        self.moves = 0
+        self.captures = 0
 
     def search_best_move(self):
         # call minimax algorithm in minimax.py file
@@ -64,6 +66,7 @@ class Tukvnanawopi:
                 # check if the move is within the board and if the space is empty
                 if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == "O":
                     make_move(new_state, move_row, move_col)
+                    self.moves += 1
                 # if the move tile is already occupied, check if it is the opponent's tile
                 elif self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
                     # multiply the rows and columns by 2 to get the capture position (to leap over the opponent's piece)
@@ -72,6 +75,7 @@ class Tukvnanawopi:
                     # check if the capture position is within the board and if the space is empty
                     if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
                         make_capture(new_state, move_row, move_col, capture_row, capture_col)
+                        self.captures += 1
             count += 1
         return
     
