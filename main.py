@@ -26,9 +26,10 @@ def main():
 
     print("Initial Board:")
     print(board_state)
-    game.possible_states(board_state, player)
-    print(f"Possible moves: {game.moves}")
-    print(f"Capture moves: {game.captures}")
+    game.root.possible_states()
+    print(f"Possible moves: {game.root.moves}")
+    print(f"Capture moves: {game.root.captures}")
+    #print(game.root.children)
 
 if __name__ == "__main__":
     main()
