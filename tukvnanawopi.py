@@ -95,11 +95,6 @@ class Tukvnanawopi:
         self.state = state
         self.root = self.Node(state, player)
 
-    def search_best_move(self):
-        # call minimax algorithm in minimax.py file
-        # return the best move
-        return
-
     def minimax(state: np.ndarray, depth: int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
         '''
         Purpose: The minimax function will explore the state space and find the best possible move for the maximizing
@@ -179,10 +174,37 @@ class Tukvnanawopi:
         # If current player has no valid moves, the game is also over
         return (white_pieces == 0 or black_pieces == 0 or not has_valid_moves)
 
-    def evaluate(self, state) -> float:
-        # heuristic
-        return
+    def evaluate(self, node: Node) -> float:
+        opponent = "W" if self.player == "B" else "B"
 
-    def utility(self, state) -> int:
-        # -1, 0 or 1
-        return
+        player_count = np.count_nonzero(node.state == self.player)
+        opponent_count = np.count_nonzero(node.state == opponent)
+
+        player_moves = node.moves
+        opponent_moves = sum(child.moves for child in node.children)
+
+        player_captures = node.captures
+        opponent_captures = sum(child.captures for child in node.children)
+
+        # Assign weights to each factor
+        piece_weight = 1.0
+        move_weight = 0.5
+        capture_weight = 2.0
+
+        player_score = (player_count * piece_weight) + (player_moves * move_weight) + (player_captures * capture_weight)
+        opponent_score = (opponent_count * piece_weight) + (opponent_moves * move_weight) + (opponent_captures * capture_weight)
+
+        # Normalize between -1 and 1
+        total_score = player_score - opponent_score
+        max_possible_score = (piece_weight * 20) + (move_weight * 20) + (capture_weight * 20)  # Approximate max values
+
+        return total_score / max_possible_score
+
+    def utility(self, node: Node) -> float:
+        if self.is_terminal(node.state, self.player):
+            opponent = "W" if self.player == "B" else "B"
+            if np.count_nonzero(node.state == self.player) > 0:
+                return 1.0 
+            elif np.count_nonzero(node.state == opponent) > 0:
+                return -1.0
+        return 0.0
