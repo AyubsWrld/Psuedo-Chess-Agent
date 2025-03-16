@@ -95,7 +95,7 @@ class Tukvnanawopi:
         self.state = state
         self.root = self.Node(state, player)
 
-    def minimax(self, state: np.ndarray, depth: int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
+    def minimax(self, node: Node, depth: int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
         '''
         Purpose: The minimax function will explore the state space and find the best possible move for the maximizing
         or minimizing player, as given in the function input.
@@ -113,13 +113,13 @@ class Tukvnanawopi:
         before I can proceed. '''
 
         
-        if depth == 0 or self.is_terminal(): # in position # add terminal state verification, later on possibly implement a time constraint
-            return self.evaluation
+        if depth == 0 or self.is_terminal(node.state, self.player): # in position # add terminal state verification, later on possibly implement a time constraint
+            return node.evaluation
 
         if maximizing_player: # max moves
             maxEval = float("-inf")
-            for child in self.children: # loop through all possible children
-                eval = self.minimax(child, (self.depth)-1, False, alpha, beta)
+            for child in node.children: # loop through all possible children
+                eval = self.minimax(child, depth-1, False, alpha, beta)
                 maxEval = max(maxEval, eval)
                 alpha = max(alpha, eval)
                 if beta <= alpha:
@@ -128,8 +128,8 @@ class Tukvnanawopi:
 
         else:
             minEval = float("+inf")
-            for child in self.children:
-                eval = self.minimax(child, (self.depth)-1, True, alpha, beta)
+            for child in node.children:
+                eval = self.minimax(child, depth-1, True, alpha, beta)
                 minEval = min(minEval, eval)
                 beta = min(beta, eval)
                 if beta <= alpha:
