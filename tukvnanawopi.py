@@ -95,7 +95,7 @@ class Tukvnanawopi:
         self.state = state
         self.root = self.Node(state, player)
 
-    def minimax(state: np.ndarray, depth: int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
+    def minimax(self, state: np.ndarray, depth: int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
         '''
         Purpose: The minimax function will explore the state space and find the best possible move for the maximizing
         or minimizing player, as given in the function input.
@@ -112,14 +112,14 @@ class Tukvnanawopi:
         Known Bugs/Problems: At the moment this is completely pseudocode. need various functions implemented by classmates
         before I can proceed. '''
 
-        '''
-        if depth == 0 or game over in position # add terminal state verification, later on possibly implement a time constraint
-            return evaluation of position
+        
+        if depth == 0 or self.is_terminal(): # in position # add terminal state verification, later on possibly implement a time constraint
+            return self.evaluation
 
         if maximizing_player: # max moves
-            maxEval = "-inf"
-            for each child of position: # logan, once we have a "list of children it will be used here"
-                eval = self.minimax(child state, depth-1, alpha, beta, false)
+            maxEval = float("-inf")
+            for child in self.children: # loop through all possible children
+                eval = self.minimax(child, (self.depth)-1, False, alpha, beta)
                 maxEval = max(maxEval, eval)
                 alpha = max(alpha, eval)
                 if beta <= alpha:
@@ -127,14 +127,14 @@ class Tukvnanawopi:
             return maxEval
 
         else:
-            minEval = "+inf"
-            for each child of position:
-                eval = self.minimax(child state, depth-1, alpha, beta, true)
+            minEval = float("+inf")
+            for child in self.children:
+                eval = self.minimax(child, (self.depth)-1, True, alpha, beta)
                 minEval = min(minEval, eval)
                 beta = min(beta, eval)
                 if beta <= alpha:
                     break
-            return maxEval '''
+            return maxEval
 
     def is_terminal(self, state, player: Player) -> bool:
         white_pieces = np.count_nonzero(state == "W")
