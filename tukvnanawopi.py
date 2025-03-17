@@ -6,7 +6,7 @@ import numpy as np
 class Tukvnanawopi:
 
     class Node:
-        def __init__(self, state, player=None, parent=None, depth=0):
+        def __init__(self, state, player=None, parent=None, depth=0, move=None):
             self.state = state
             self.parent = parent
             self.player = player
@@ -15,11 +15,13 @@ class Tukvnanawopi:
             self.captures = 0
             self.evaluation = 0
             self.depth = depth
+            self.move = move
 
         def index_to_coordinate(self, row, col):
-            col_letter = chr(ord('A') + col - 1)
             row_number = 9 - row
-            return f"{col_letter}{row_number + 1}"
+            col_list = "ABCDEFGHI"
+            col_letter = col_list[col - 1]
+            return f"{col_letter}{row_number}"
 
         def possible_states(self):
             # generate children of the current state
@@ -38,28 +40,67 @@ class Tukvnanawopi:
         def check_moves(self, state, rows, cols, player):
             # check all possible moves for the current player
             # make a move based on the inputed rows and cols
+            
+            
             def make_move(new_state, row, col):
+                """
+                Purpose: Makes a move for the current player by updating the game state
+                
+                Input:
+                    - new_state (2D array): A matrix representing the current state of the game board.
+                    - row (int): The row index of the new position where the player is making a move.
+                    - col (int): The column index of the new position where the player is making a move.
+                
+                Output:
+                    - new_state (2D array): The updated game state after the move is made.
+                    - move_tuple (tuple): A tuple representing the move made, containing the original and new coordinates of the piece.
+                """
+                # made a modification here so that make_move will return the move that resulted in the new state
                 original_row, original_col = rows[count], cols[count]
-                print(f"Making move for {player} from {self.index_to_coordinate(original_row, original_col)} to {self.index_to_coordinate(row, col)}")
+                original_coord = self.index_to_coordinate(original_row, original_col)
+                new_coord = self.index_to_coordinate(row, col)
+                print(f"Making move for {player} from {original_coord} to {new_coord}")
+                move_tuple = (original_coord, new_coord) # tuple representing which piece was moved
                 new_state[row, col] = player
                 new_state[rows[count], cols[count]] = "O"
                 
                 print("Possible State:")
                 print(new_state)
-                return new_state
+                return new_state, move_tuple
+
 
             # make a capture based on the inputed rows and cols
             def make_capture(new_state, move_row, move_col, capture_row, capture_col):
+                """
+                Purpose: Makes a capture move for the current player by updating the game state and capturing the opponent's piece.
+                
+                Input:
+                    - new_state (2D array): A matrix representing the current state of the game board.
+                    - move_row (int): The row index of the new position where the player is moving the piece.
+                    - move_col (int): The column index of the new position where the player is moving the piece.
+                    - capture_row (int): The row index of the opponent's piece being captured.
+                    - capture_col (int): The column index of the opponent's piece being captured.
+                
+                Output:
+                    - new_state (2D array): The updated game state after the capture move is made.
+                    - move_tuple (tuple): A tuple representing the move made, containing the original, new, and captured coordinates of the piece.
+                """
                 original_row, original_col = rows[count], cols[count]
-    
-                # print the capture move being made
-                print(f"Making capture for {player} from {self.index_to_coordinate(original_row, original_col)} to {self.index_to_coordinate(move_row, move_col)}, capturing opponent at {self.index_to_coordinate(capture_row, capture_col)}")
+                original_coord = self.index_to_coordinate(original_row, original_col)
+                move_coord = self.index_to_coordinate(move_row, move_col)
+                capture_coord = self.index_to_coordinate(capture_row, capture_col)
+                
+                print(f"Making capture for {player} from {original_coord} to {move_coord}, capturing opponent at {capture_coord}")
+                
                 new_state[capture_row, capture_col] = player
                 new_state[move_row, move_col] = "O"
                 new_state[rows[count], cols[count]] = "O"
+                
                 print("Possible State:")
                 print(new_state)
-                return new_state
+                
+                move_tuple = (original_coord, move_coord, capture_coord)
+                return new_state, move_tuple
 
             # get the opposite of the current player
             def get_opponent():
