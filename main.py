@@ -31,8 +31,8 @@ def main():
     print(f"Capture moves: {game.root.captures}")
     #print(game.root.children)
 
-    best_move = game.minimax(game.root, depth = 0, maximizing_player=True)
-    print("Best move is:", best_move)
+    evaluation, best_move = game.minimax(game.root, depth = 4, maximizing_player=True)
+    print("Best move is:", best_move, evaluation)
 
 
 if __name__ == "__main__":

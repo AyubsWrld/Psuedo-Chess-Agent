@@ -41,7 +41,7 @@ class Tukvnanawopi:
             # check all possible moves for the current player
             # make a move based on the inputed rows and cols
             
-            
+
             def make_move(new_state, row, col):
                 """
                 Purpose: Makes a move for the current player by updating the game state
@@ -120,8 +120,8 @@ class Tukvnanawopi:
                     move_row, move_col = rows[count] + move[0], cols[count] + move[1]
                     # check if the move is within the board and if the space is empty
                     if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == "O":
-                        new_state = make_move(new_state, move_row, move_col)
-                        new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1)
+                        new_state, move_tuple = make_move(new_state, move_row, move_col)
+                        new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1, move_tuple)
                         self.children.append(new_node)
                         self.moves += 1
                     # if the move tile is already occupied, check if it is the opponent's tile
@@ -131,8 +131,8 @@ class Tukvnanawopi:
                         capture_row, capture_col = rows[count] + capture[0], cols[count] + capture[1]
                         # check if the capture position is within the board and if the space is empty
                         if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
-                            new_state = make_capture(new_state, move_row, move_col, capture_row, capture_col)
-                            new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1)
+                            new_state, move_tuple = make_capture(new_state, move_row, move_col, capture_row, capture_col)
+                            new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1, move_tuple)
                             self.children.append(new_node)
                             self.captures += 1
                 count += 1
@@ -160,37 +160,10 @@ class Tukvnanawopi:
         Output: As specified by the project description, the output consists of a single move that the agent performs.
         A move is indicated by a pair of squares, where the first indicates which piece is to be moved, and the second
         indicates where the piece is to be moved. For example, in the board configuration above, the horizontal right
-        move on row 5 will be represented as C5-E5
-
-        Known Bugs/Problems: At the moment this is completely pseudocode. need various functions implemented by classmates
-        before I can proceed. '''
+        move on row 5 will be represented as C5-E5'
+        '''
 
         
-        if depth == 0 or self.is_terminal(node.state, self.player): # in position # add terminal state verification, later on possibly implement a time constraint
-            return node.evaluation
-        
-        if not node.children:
-            node.possible_states()
-
-        if maximizing_player: # max moves
-            maxEval = float("-inf")
-            for child in node.children: # loop through all possible children
-                eval = self.minimax(child, depth-1, False, alpha, beta)
-                maxEval = max(maxEval, eval)
-                alpha = max(alpha, eval)
-                if beta <= alpha:
-                    break
-            return maxEval
-
-        else:
-            minEval = float("+inf")
-            for child in node.children:
-                eval = self.minimax(child, depth-1, True, alpha, beta)
-                minEval = min(minEval, eval)
-                beta = min(beta, eval)
-                if beta <= alpha:
-                    break
-            return minEval
 
     def is_terminal(self, state, player: Player) -> bool:
         white_pieces = np.count_nonzero(state == "W")
