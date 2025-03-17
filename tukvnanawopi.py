@@ -16,6 +16,11 @@ class Tukvnanawopi:
             self.evaluation = 0
             self.depth = depth
 
+        def index_to_coordinate(self, row, col):
+            col_letter = chr(ord('A') + col - 1)
+            row_number = 9 - row
+            return f"{col_letter}{row_number + 1}"
+
         def possible_states(self):
             # generate children of the current state
             if self.player == "W":
@@ -34,14 +39,21 @@ class Tukvnanawopi:
             # check all possible moves for the current player
             # make a move based on the inputed rows and cols
             def make_move(new_state, row, col):
+                original_row, original_col = rows[count], cols[count]
+                print(f"Making move for {player} from {self.index_to_coordinate(original_row, original_col)} to {self.index_to_coordinate(row, col)}")
                 new_state[row, col] = player
                 new_state[rows[count], cols[count]] = "O"
+                
                 print("Possible State:")
                 print(new_state)
                 return new_state
 
             # make a capture based on the inputed rows and cols
             def make_capture(new_state, move_row, move_col, capture_row, capture_col):
+                original_row, original_col = rows[count], cols[count]
+    
+                # print the capture move being made
+                print(f"Making capture for {player} from {self.index_to_coordinate(original_row, original_col)} to {self.index_to_coordinate(move_row, move_col)}, capturing opponent at {self.index_to_coordinate(capture_row, capture_col)}")
                 new_state[capture_row, capture_col] = player
                 new_state[move_row, move_col] = "O"
                 new_state[rows[count], cols[count]] = "O"
@@ -115,6 +127,9 @@ class Tukvnanawopi:
         
         if depth == 0 or self.is_terminal(node.state, self.player): # in position # add terminal state verification, later on possibly implement a time constraint
             return node.evaluation
+        
+        if not node.children:
+            node.possible_states()
 
         if maximizing_player: # max moves
             maxEval = float("-inf")
@@ -134,7 +149,7 @@ class Tukvnanawopi:
                 beta = min(beta, eval)
                 if beta <= alpha:
                     break
-            return maxEval
+            return minEval
 
     def is_terminal(self, state, player: Player) -> bool:
         white_pieces = np.count_nonzero(state == "W")
@@ -164,7 +179,7 @@ class Tukvnanawopi:
 
             for dr, dc in directions:
                 new_row, new_col = row + dr, col + dc
-                if self.is_within_bounds(new_row, new_col, state) and state[new_row, new_col] == "O":
+                if self.root.is_within_bounds(new_row, new_col, state) and state[new_row, new_col] == "O":
                     has_valid_moves = True
                     break
 
