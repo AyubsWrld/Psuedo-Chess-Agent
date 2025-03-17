@@ -6,7 +6,7 @@ import numpy as np
 class Tukvnanawopi:
 
     class Node:
-        def __init__(self, state, player=None, parent=None, depth=0, move=None):
+        def __init__(self, state, player=None, parent=None, depth=0):
             self.state = state
             self.parent = parent
             self.player = player
@@ -15,13 +15,11 @@ class Tukvnanawopi:
             self.captures = 0
             self.evaluation = 0
             self.depth = depth
-            self.move = move
 
         def index_to_coordinate(self, row, col):
+            col_letter = chr(ord('A') + col - 1)
             row_number = 9 - row
-            col_list = "ABCDEFGHI"
-            col_letter = col_list[col - 1]
-            return f"{col_letter}{row_number}"
+            return f"{col_letter}{row_number + 1}"
 
         def possible_states(self):
             # generate children of the current state
@@ -36,71 +34,32 @@ class Tukvnanawopi:
                 cols = x[1]  # cols where there is a B
                 self.check_moves(self.state, rows, cols, self.player)
             return
-
+
         def check_moves(self, state, rows, cols, player):
             # check all possible moves for the current player
             # make a move based on the inputed rows and cols
-            
-
             def make_move(new_state, row, col):
-                """
-                Purpose: Makes a move for the current player by updating the game state
-                
-                Input:
-                    - new_state (2D array): A matrix representing the current state of the game board.
-                    - row (int): The row index of the new position where the player is making a move.
-                    - col (int): The column index of the new position where the player is making a move.
-                
-                Output:
-                    - new_state (2D array): The updated game state after the move is made.
-                    - move_tuple (tuple): A tuple representing the move made, containing the original and new coordinates of the piece.
-                """
-                # made a modification here so that make_move will return the move that resulted in the new state
                 original_row, original_col = rows[count], cols[count]
-                original_coord = self.index_to_coordinate(original_row, original_col)
-                new_coord = self.index_to_coordinate(row, col)
-                print(f"Making move for {player} from {original_coord} to {new_coord}")
-                move_tuple = (original_coord, new_coord) # tuple representing which piece was moved
+                print(f"Making move for {player} from {self.index_to_coordinate(original_row, original_col)} to {self.index_to_coordinate(row, col)}")
                 new_state[row, col] = player
                 new_state[rows[count], cols[count]] = "O"
                 
                 print("Possible State:")
                 print(new_state)
-                return new_state, move_tuple
-
+                return new_state
 
             # make a capture based on the inputed rows and cols
             def make_capture(new_state, move_row, move_col, capture_row, capture_col):
-                """
-                Purpose: Makes a capture move for the current player by updating the game state and capturing the opponent's piece.
-                
-                Input:
-                    - new_state (2D array): A matrix representing the current state of the game board.
-                    - move_row (int): The row index of the new position where the player is moving the piece.
-                    - move_col (int): The column index of the new position where the player is moving the piece.
-                    - capture_row (int): The row index of the opponent's piece being captured.
-                    - capture_col (int): The column index of the opponent's piece being captured.
-                
-                Output:
-                    - new_state (2D array): The updated game state after the capture move is made.
-                    - move_tuple (tuple): A tuple representing the move made, containing the original, new, and captured coordinates of the piece.
-                """
                 original_row, original_col = rows[count], cols[count]
-                original_coord = self.index_to_coordinate(original_row, original_col)
-                move_coord = self.index_to_coordinate(move_row, move_col)
-                capture_coord = self.index_to_coordinate(capture_row, capture_col)
-                
-                print(f"Making capture for {player} from {original_coord} to {move_coord}, capturing opponent at {capture_coord}")
-                
+    
+                # print the capture move being made
+                print(f"Making capture for {player} from {self.index_to_coordinate(original_row, original_col)} to {self.index_to_coordinate(move_row, move_col)}, capturing opponent at {self.index_to_coordinate(capture_row, capture_col)}")
                 new_state[capture_row, capture_col] = player
                 new_state[move_row, move_col] = "O"
                 new_state[rows[count], cols[count]] = "O"
-                
                 print("Possible State:")
                 print(new_state)
-                
-                move_tuple = (original_coord, move_coord, capture_coord)
-                return new_state, move_tuple
+                return new_state
 
             # get the opposite of the current player
             def get_opponent():
@@ -120,8 +79,8 @@ class Tukvnanawopi:
                     move_row, move_col = rows[count] + move[0], cols[count] + move[1]
                     # check if the move is within the board and if the space is empty
                     if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == "O":
-                        new_state, move_tuple = make_move(new_state, move_row, move_col)
-                        new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1, move_tuple)
+                        new_state = make_move(new_state, move_row, move_col)
+                        new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1)
                         self.children.append(new_node)
                         self.moves += 1
                     # if the move tile is already occupied, check if it is the opponent's tile
@@ -131,8 +90,8 @@ class Tukvnanawopi:
                         capture_row, capture_col = rows[count] + capture[0], cols[count] + capture[1]
                         # check if the capture position is within the board and if the space is empty
                         if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
-                            new_state, move_tuple = make_capture(new_state, move_row, move_col, capture_row, capture_col)
-                            new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1, move_tuple)
+                            new_state = make_capture(new_state, move_row, move_col, capture_row, capture_col)
+                            new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1)
                             self.children.append(new_node)
                             self.captures += 1
                 count += 1
@@ -148,7 +107,7 @@ class Tukvnanawopi:
         self.state = state
         self.root = self.Node(state, player)
 
-    def minimax(self, node: Node, depth: int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
+    def minimax(self, node, depth: int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf):
         '''
         Purpose: The minimax function will explore the state space and find the best possible move for the maximizing
         or minimizing player, as given in the function input.
@@ -160,13 +119,44 @@ class Tukvnanawopi:
         Output: As specified by the project description, the output consists of a single move that the agent performs.
         A move is indicated by a pair of squares, where the first indicates which piece is to be moved, and the second
         indicates where the piece is to be moved. For example, in the board configuration above, the horizontal right
-        move on row 5 will be represented as C5-E5'
-        '''
-        pass
+        move on row 5 will be represented as C5-E5
 
+        Known Bugs/Problems: At the moment this is completely pseudocode. need various functions implemented by classmates
+        before I can proceed. '''
+        if depth == 0 or self.is_terminal(node.state, self.player):
+            # For leaf nodes, evaluate the state and return the evaluation score and None as the move
+            node.evaluation = self.evaluate(node)
+            return node.evaluation, None
         
+        if not node.children:
+            node.possible_states()
+        
+        best_child = None
+        
+        if maximizing_player:
+            max_eval = float("-inf")
+            for child in node.children:
+                eval_score, _ = self.minimax(child, depth-1, False, alpha, beta)
+                if eval_score > max_eval:
+                    max_eval = eval_score
+                    best_child = child
+                alpha = max(alpha, eval_score)
+                if beta <= alpha:
+                    break
+            return max_eval, best_child
+        else:
+            min_eval = float("inf")
+            for child in node.children:
+                eval_score, _ = self.minimax(child, depth-1, True, alpha, beta)
+                if eval_score < min_eval:
+                    min_eval = eval_score
+                    best_child = child
+                beta = min(beta, eval_score)
+                if beta <= alpha:
+                    break
+            return min_eval, best_child
 
-    def is_terminal(self, state, player: Player) -> bool:
+    def is_terminal(self, state, player):
         white_pieces = np.count_nonzero(state == "W")
         black_pieces = np.count_nonzero(state == "B")
 
@@ -187,9 +177,8 @@ class Tukvnanawopi:
             row, col = rows[i], cols[i]
 
             directions = [
-                (-2, 0), (2, 0), (0, -2), (0, 2),  # Vertical and horizontal jumps ( gotta check validity )
-                (-1, -1), (-1, 1), (1, -1), (1, 1),  # Diagonal moves ( gotta check validity )
-                # Could add jump captures here if needed
+                (-2, 0), (2, 0), (0, -2), (0, 2),  # Vertical and horizontal jumps
+                (-1, -1), (-1, 1), (1, -1), (1, 1),  # Diagonal moves
             ]
 
             for dr, dc in directions:
@@ -204,33 +193,41 @@ class Tukvnanawopi:
         # If current player has no valid moves, the game is also over
         return (white_pieces == 0 or black_pieces == 0 or not has_valid_moves)
 
-    def evaluate(self, node: Node) -> float:
+    def evaluate(self, node):
+        """
+        Evaluate the state of the game from the perspective of the current player.
+        Returns a value between -1.0 and 1.0.
+        """
+        if self.is_terminal(node.state, self.player):
+            return self.utility(node)
+        
         opponent = "W" if self.player == "B" else "B"
-
+    
         player_count = np.count_nonzero(node.state == self.player)
         opponent_count = np.count_nonzero(node.state == opponent)
-
-        player_moves = node.moves
-        opponent_moves = sum(child.moves for child in node.children)
-
-        player_captures = node.captures
-        opponent_captures = sum(child.captures for child in node.children)
-
-        # Assign weights to each factor
+    
+        player_moves = 0
+        player_captures = 0
+        
+        if not node.children:
+            mobility_score = 0
+        else:
+            player_moves = node.moves
+            player_captures = node.captures
+        
         piece_weight = 1.0
         move_weight = 0.5
         capture_weight = 2.0
+    
+        piece_advantage = (player_count - opponent_count) / max(1, player_count + opponent_count)
+        mobility_advantage = player_moves * move_weight + player_captures * capture_weight
+        
+        total_score = piece_advantage * piece_weight + mobility_advantage / 20  
+        
+        return max(min(total_score, 1.0), -1.0)
 
-        player_score = (player_count * piece_weight) + (player_moves * move_weight) + (player_captures * capture_weight)
-        opponent_score = (opponent_count * piece_weight) + (opponent_moves * move_weight) + (opponent_captures * capture_weight)
 
-        # Normalize between -1 and 1
-        total_score = player_score - opponent_score
-        max_possible_score = (piece_weight * 20) + (move_weight * 20) + (capture_weight * 20)  # Approximate max values
-
-        return total_score / max_possible_score
-
-    def utility(self, node: Node) -> float:
+    def utility(self, node):
         if self.is_terminal(node.state, self.player):
             opponent = "W" if self.player == "B" else "B"
             if np.count_nonzero(node.state == self.player) > 0:
@@ -238,3 +235,31 @@ class Tukvnanawopi:
             elif np.count_nonzero(node.state == opponent) > 0:
                 return -1.0
         return 0.0
+    
+    def format_move(self, original_state, new_state):
+        """
+        Compare original and new state to determine the move made.
+        Returns a string representation of the move (e.g., "C5-E5").
+        """
+        # Find where the piece moved from (where original has piece but new has empty)
+        moved_from = np.where((original_state != "O") & (new_state == "O"))
+        # Find where the piece moved to (where original is empty but new has piece)
+        moved_to = np.where((original_state == "O") & (new_state != "O"))
+        
+        if len(moved_from[0]) > 0 and len(moved_to[0]) > 0:
+            from_row, from_col = moved_from[0][0], moved_from[1][0]
+            to_row, to_col = moved_to[0][0], moved_to[1][0]
+            
+            # Convert to board coordinates (e.g., A1, B2)
+            from_coord = self.convert_to_coordinate(from_row, from_col)
+            to_coord = self.convert_to_coordinate(to_row, to_col)
+            
+            return f"{from_coord}-{to_coord}"
+        
+        return "Unknown move"
+    
+    def convert_to_coordinate(self, row, col):
+        """Convert zero-based indices to board coordinates (e.g., A1, B2)"""
+        col_letter = chr(ord('A') + col - 1)  # Assuming col starts at 1 in board representation
+        row_number = 9 - row  # Assuming row starts at 9 in board representation
+        return f"{col_letter}{row_number}"
