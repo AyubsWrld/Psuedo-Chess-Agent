@@ -1,6 +1,7 @@
 import time
 from player import Player
 import numpy as np
+import math
 
 
 class Tukvnanawopi:
@@ -148,7 +149,7 @@ class Tukvnanawopi:
         self.state = state
         self.root = self.Node(state, player)
 
-    def minimax(self, node: Node, depth: int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
+    def minimax(self, node: Node, depth:int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
         '''
         Purpose: The minimax function will explore the state space and find the best possible move for the maximizing
         or minimizing player, as given in the function input.
@@ -162,7 +163,37 @@ class Tukvnanawopi:
         indicates where the piece is to be moved. For example, in the board configuration above, the horizontal right
         move on row 5 will be represented as C5-E5'
         '''
-        pass
+
+        if self.is_terminal(node.state, self.player):
+            print("I AM HEREREWIOLFUHJASDIKL;FHJASDLKGUJDFKLG")
+            return self.evaluate(node), node.move
+        
+        if maximizing_player:
+            max_eval = -math.inf
+            best_move = None
+            node.possible_states() # generate the children of the 
+            for child in node.children:
+                eval, _ = self.minimax(child, False, alpha, beta) # call minimax for minimizing player
+                if eval > max_eval:
+                    max_eval = eval
+                    best_move = child.move
+                alpha = max(alpha, eval)
+                if beta <= alpha: #prune
+                    break
+            return max_eval, best_move
+        else:
+            min_eval = math.inf
+            best_move = None
+            node.possible_states() # generate the children of the 
+            for child in node.children:
+                eval, _ = self.minimax(child, True, alpha, beta) # call minimax for minimizing player
+                if eval < min_eval:
+                    min_eval = eval
+                    best_move = child.move
+                beta = min(alpha, eval)
+                if beta <= alpha: #prune
+                    break
+            return min_eval, best_move
 
         
 
