@@ -18,8 +18,9 @@ def main():
     with open(board_file, 'r') as f:
         board_state = [list(line.strip().split()) for line in f.readlines()]
     
-    board_state[-1].insert(0," ")
     board_state = np.array(board_state, dtype=str)
+
+    print(board_state)
 
     player = Player.BLACK if player_char == 'B' else Player.WHITE
     game = Tukvnanawopi(player=player, time_limit=10, state=board_state)
