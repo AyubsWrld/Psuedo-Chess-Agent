@@ -21,7 +21,7 @@ class Tukvnanawopi:
         def index_to_coordinate(self, row, col):
             row_number = 9 - row
             col_list = "ABCDEFGHI"
-            col_letter = col_list[col - 1]
+            col_letter = col_list[col]
             return f"{col_letter}{row_number}"
 
         def possible_states(self):
