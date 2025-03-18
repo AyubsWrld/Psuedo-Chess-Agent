@@ -165,10 +165,10 @@ class Tukvnanawopi:
         '''
 
         if self.is_terminal(node.state, self.player):
-            print("I AM HEREREWIOLFUHJASDIKL;FHJASDLKGUJDFKLG")
             return self.evaluate(node), node.move
         
         if maximizing_player:
+            print("here")
             max_eval = -math.inf
             best_move = None
             node.possible_states() # generate the children of the 
@@ -182,6 +182,7 @@ class Tukvnanawopi:
                     break
             return max_eval, best_move
         else:
+            print("here")
             min_eval = math.inf
             best_move = None
             node.possible_states() # generate the children of the 
@@ -200,6 +201,7 @@ class Tukvnanawopi:
     def is_terminal(self, state, player: Player) -> bool:
         white_pieces = np.count_nonzero(state == "W")
         black_pieces = np.count_nonzero(state == "B")
+
 
         if white_pieces == 0 or black_pieces == 0:
             return True
