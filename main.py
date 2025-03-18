@@ -25,14 +25,14 @@ def main():
     player = Player.BLACK if player_char == 'B' else Player.WHITE
     game = Tukvnanawopi(player=player, time_limit=10, state=state_separated)
 
-    print("Initial Board:")
-    print(state_separated)
-    game.root.possible_states()
-    print(f"Possible moves: {game.root.moves}")
-    print(f"Capture moves: {game.root.captures}")
-    #print(game.root.children)
+    # print("Initial Board:")
+    # print(state_separated)
+    # game.root.possible_states()
+    # print(f"Possible moves: {game.root.moves}")
+    # print(f"Capture moves: {game.root.captures}")
+    # #print(game.root.children)
 
-    evaluation, best_move = game.minimax(game.root, depth=2, maximizing_player=True)
+    evaluation, best_move = game.minimax(game.root, depth=0, maximizing_player=True)
     print("Best move is:", best_move, evaluation)
 
 
