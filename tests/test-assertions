@@ -1,0 +1,31 @@
+#!/usr/sbin/bash
+
+# Test Case 1: Valid Move
+echo "Running Test Case 1: Valid Move (W B2-C3)"
+python ./tmovecheck.py tsample W B2-C3
+echo "--------------------------------------"
+
+# Test Case 2: Invalid Move (Not Own Piece)
+echo "Running Test Case 2: Invalid Move (Not Own Piece) (W F6-F7)"
+python ./tmovecheck.py tsample W F6-F7
+echo "--------------------------------------"
+
+# Test Case 3: Invalid Move (Occupied Destination)
+echo "Running Test Case 3: Invalid Move (Occupied Destination) (W E6-F6)"
+python ./tmovecheck.py tsample W E6-F6
+echo "--------------------------------------"
+
+# Test Case 4: Valid Capture Move
+echo "Running Test Case 4: Valid Capture Move (B F7-E6)"
+python ./tmovecheck.py tsample B F7-E6
+echo "--------------------------------------"
+
+# Test Case 5: Invalid Capture (No Piece to Jump)
+echo "Running Test Case 5: Invalid Capture (No Piece to Jump) (B D4-E5)"
+python ./tmovecheck.py tsample B D4-E5
+echo "--------------------------------------"
+
+# Test Case 6: Move to Unplayable Row (After Progression)
+echo "Running Test Case 6: Move to Unplayable Row (After Progression) (W G6-G5)"
+python ./tmovecheck.py tsample W G6-G5
+echo "--------------------------------------
