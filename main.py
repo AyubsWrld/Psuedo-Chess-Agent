@@ -2,11 +2,13 @@ import sys
 from tukvnanawopi import Tukvnanawopi
 from player import Player
 import numpy as np
+from utils.logger import log, LogLevel
 
 
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python3 main.py <board_file> <B|W>")
+        print("Usage: tukvnanawopi file player")
+        print("""Where: file is the name of a file that contains the board configuration\n       player is either B or W, indicating which player the agent should assume""")
         return
 
     board_file = sys.argv[1]
