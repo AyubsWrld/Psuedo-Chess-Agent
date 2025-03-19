@@ -16,18 +16,18 @@ def main():
         return
 
     with open(board_file, 'r') as f:
-        board_state = [list(line.strip().split()) for line in f.readlines()]
+        board_state = [list(line.split()) for line in f.readlines()]
     
     board_state = np.array(board_state, dtype=str)
-
-    state_separated = np.array([list(cell[0]) for cell in board_state])
+    board_state = np.array([list(cell[0]) for cell in board_state])
 
     player = Player.BLACK if player_char == 'B' else Player.WHITE
-    game = Tukvnanawopi(player=player, time_limit=10, state=state_separated)
+    game = Tukvnanawopi(player=player, time_limit=10, state=board_state)
+    #print(game.root.children)
 
     # print("Initial Board:")
     # print(state_separated)
-    # game.root.possible_states()
+    game.root.possible_states()
     # print(f"Possible moves: {game.root.moves}")
     # print(f"Capture moves: {game.root.captures}")
     # #print(game.root.children)
