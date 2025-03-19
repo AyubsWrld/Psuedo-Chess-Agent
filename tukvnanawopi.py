@@ -60,13 +60,13 @@ class Tukvnanawopi:
                 original_row, original_col = rows[count], cols[count]
                 original_coord = self.index_to_coordinate(original_row, original_col)
                 new_coord = self.index_to_coordinate(row, col)
-                #print(f"Making move for {player} from {original_coord} to {new_coord}")
+                ### print(f"Making move for {player} from {original_coord} to {new_coord}")
                 move_tuple = (original_coord, new_coord) # tuple representing which piece was moved
                 new_state[row, col] = player
                 new_state[rows[count], cols[count]] = "O"
                 
-                #print("Possible State:")
-                #print(new_state)
+                ###print("Possible State:")
+                ###print(new_state)
                 return new_state, move_tuple
 
 
@@ -91,14 +91,14 @@ class Tukvnanawopi:
                 move_coord = self.index_to_coordinate(move_row, move_col)
                 capture_coord = self.index_to_coordinate(capture_row, capture_col)
                 
-                #print(f"Making capture for {player} from {original_coord} to {move_coord}, capturing opponent at {capture_coord}")
+                ###print(f"Making capture for {player} from {original_coord} to {move_coord}, capturing opponent at {capture_coord}")
                 
                 new_state[capture_row, capture_col] = player
                 new_state[move_row, move_col] = "O"
                 new_state[rows[count], cols[count]] = "O"
                 
                 #print("Possible State:")
-                #print(new_state) 
+                #print(new_state)
                 
                 move_tuple = (original_coord, move_coord, capture_coord)
                 return new_state, move_tuple
@@ -164,11 +164,10 @@ class Tukvnanawopi:
         move on row 5 will be represented as C5-E5'
         '''
 
-        if self.is_terminal(node.state, self.player):
+        if self.is_terminal(node.state, self.player) or depth==0:
             return self.evaluate(node), node.move
         
         if maximizing_player:
-            #print("here")
             max_eval = -math.inf
             best_move = None
             node.possible_states() # generate the children of the 
@@ -182,7 +181,6 @@ class Tukvnanawopi:
                     break
             return max_eval, best_move
         else:
-            #print("here")
             min_eval = math.inf
             best_move = None
             node.possible_states() # generate the children of the 
