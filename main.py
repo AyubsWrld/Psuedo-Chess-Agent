@@ -23,6 +23,7 @@ def main():
     board_state = np.array(board_state, dtype=str)
     board_state = np.array([list(cell[0]) for cell in board_state])
 
+
     player = Player.BLACK if player_char == 'B' else Player.WHITE
     game = Tukvnanawopi(player=player, time_limit=10, state=board_state)
     #print(game.root.children)
