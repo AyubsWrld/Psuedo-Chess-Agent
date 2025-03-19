@@ -33,8 +33,10 @@ def main():
     # #print(game.root.children)
 
     evaluation, best_move = game.minimax(game.root, depth=10, maximizing_player=True)
-    print("Best move is:", best_move, evaluation)
+    # 
+    #print("Best move is:", best_move, evaluation)
 
+    print(f'{best_move[0]}-{best_move[1]}')
 
 if __name__ == "__main__":
     main()

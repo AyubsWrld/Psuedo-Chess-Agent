@@ -1,0 +1,39 @@
+Tukvnanawopi Game Programs
+
+This repository contains three programs for playing and managing games of Tukvnanawopi: tplay, tmovecheck, and td.pl.
+Programs
+1. tplay
+
+tplay is an executable that implements a random Tukvnanawopi player. It is invoked with the following syntax:
+
+./tplay file player
+
+    file: The name of a file that contains the board configuration.
+    player: Either B or W, indicating which player the agent should assume.
+
+Examples:
+
+./tplay tsample1 B
+./tplay tsample2 W
+./tplay tsample3 B
+
+2. tmovecheck
+
+tmovecheck is a utility that checks if a given move is correct on a certain board configuration. It is used by the driver script.
+
+3. td.pl
+
+td.pl is a Perl script that drives a game between two players. It is invoked with the following syntax:
+
+./td.pl blackplayer whiteplayer
+
+    blackplayer: The executable for the first player.
+    whiteplayer: The executable for the second player.
+
+Example:
+
+./td.pl tplay tplay
+
+This command will play a full game of the random player against a "clone" of itself.
+
+NOTE: If you find any issues, errors, bugs regarding these programs, please email antonc@macewan.ca.
