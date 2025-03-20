@@ -116,7 +116,7 @@ class Tukvnanawopi:
             opponent = get_opponent()
             for row, col in zip(rows,cols):
                 for move in moves:
-                    #print(move)
+                    print(move)
                     count = 2
                     new_state = state.copy()
                     # keep track of the col and row for the move
@@ -131,11 +131,14 @@ class Tukvnanawopi:
                         self.moves += 1
                     # multiply the rows and columns by 2 to get the capture position (to leap over the opponent's piece)
                     capture_row, capture_col = row + 2 * move[0], col + 2 * move[1]
+                    # keep track of the original row and col
                     original_row, original_col = row, col
-                    # if the move tile is already occupied, check if it is the opponent's tile
+                    # initialize the capture variable to None
                     capture = None
+                    # if the move tile is already occupied, check if it is the opponent's tile
                     if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
                         capture = True
+                    # if a capture is possible, keep leaping over the opponent's pieces
                     while capture == True and self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
                         #print("while loop")
                         # check if the capture position is within the board and if the space is empty
@@ -148,14 +151,16 @@ class Tukvnanawopi:
                             original_row, original_col = capture_row, capture_col
                             #print(self.index_to_coordinate(original_row, original_col))
                             move_row, move_col = capture_row + move[0], capture_col + move[1]
-                            capture_row, capture_col = col + 2 * move[0] * count, row + 2 * move[1] * count
+                            capture_row, capture_col = row + 2 * move[0] * count, col + 2 * move[1] * count
+                            #print(self.index_to_coordinate(capture_row, capture_col))
+                            #print(capture_col,capture_row)
                             #if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
                                 #print("Move:")
                                 #print(self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent)
                                 #print(self.index_to_coordinate(move_row, move_col))
                             #if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
                                 #print("Capture:")
-                                ##print(self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O")
+                                #print(self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O")
                                 #print(self.index_to_coordinate(capture_row, capture_col))
                             count += 1
                         else:
