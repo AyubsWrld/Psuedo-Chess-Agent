@@ -43,7 +43,7 @@ class Tukvnanawopi:
             # make a move based on the inputed rows and cols
             
 
-            def make_move(new_state, row, col):
+            def make_move(new_state, row, col, move_row, move_col):
                 """
                 Purpose: Makes a move for the current player by updating the game state
                 
@@ -57,21 +57,21 @@ class Tukvnanawopi:
                     - move_tuple (tuple): A tuple representing the move made, containing the original and new coordinates of the piece.
                 """
                 # made a modification here so that make_move will return the move that resulted in the new state
-                original_row, original_col = rows[count], cols[count]
+                original_row, original_col = row, col
                 original_coord = self.index_to_coordinate(original_row, original_col)
                 new_coord = self.index_to_coordinate(row, col)
                 ### print(f"Making move for {player} from {original_coord} to {new_coord}")
                 move_tuple = (original_coord, new_coord) # tuple representing which piece was moved
-                new_state[row, col] = player
-                new_state[rows[count], cols[count]] = "O"
+                new_state[move_row, move_col] = player
+                new_state[row, col] = "O"
                 
-                ###print("Possible State:")
-                ###print(new_state)
+                print("Possible State:")
+                print(new_state)
                 return new_state, move_tuple
 
 
             # make a capture based on the inputed rows and cols
-            def make_capture(new_state, move_row, move_col, capture_row, capture_col):
+            def make_capture(new_state, row, col, move_row, move_col, capture_row, capture_col):
                 """
                 Purpose: Makes a capture move for the current player by updating the game state and capturing the opponent's piece.
                 
@@ -86,19 +86,20 @@ class Tukvnanawopi:
                     - new_state (2D array): The updated game state after the capture move is made.
                     - move_tuple (tuple): A tuple representing the move made, containing the original, new, and captured coordinates of the piece.
                 """
-                original_row, original_col = rows[count], cols[count]
+                original_row, original_col = row, col
                 original_coord = self.index_to_coordinate(original_row, original_col)
                 move_coord = self.index_to_coordinate(move_row, move_col)
                 capture_coord = self.index_to_coordinate(capture_row, capture_col)
                 
-                ###print(f"Making capture for {player} from {original_coord} to {move_coord}, capturing opponent at {capture_coord}")
+                print(f"Making capture for {player} from {original_coord} to {capture_coord}, capturing opponent at {move_coord}")
                 
                 new_state[capture_row, capture_col] = player
                 new_state[move_row, move_col] = "O"
-                new_state[rows[count], cols[count]] = "O"
+                new_state[row, col] = "O"
+                #print(original_coord)
                 
-                #print("Possible State:")
-                #print(new_state)
+                print("Possible State:")
+                print(new_state)
                 
                 move_tuple = (original_coord, move_coord, capture_coord)
                 return new_state, move_tuple
@@ -111,32 +112,54 @@ class Tukvnanawopi:
                     opponent = "W"
                 return opponent
 
-            count = 0
             moves = [(-2, 0), (2, 0), (0, -2), (0, 2), (-1, -1), (-1, 1), (1, -1), (1, 1)]
             opponent = get_opponent()
-            for i in range(len(rows)):
-                new_state = state.copy()
+            for row, col in zip(rows,cols):
                 for move in moves:
+                    #print(move)
+                    count = 2
+                    new_state = state.copy()
                     # keep track of the col and row for the move
-                    move_row, move_col = rows[count] + move[0], cols[count] + move[1]
+                    move_row, move_col = row + move[0], col + move[1]
                     # check if the move is within the board and if the space is empty
+                    #print(self.is_within_bounds(move_row, move_col, state))
+                    #print(state[move_row, move_col] == "O")
                     if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == "O":
-                        new_state, move_tuple = make_move(new_state, move_row, move_col)
+                        new_state, move_tuple = make_move(new_state, row, col, move_row, move_col)
                         new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1, move_tuple)
                         self.children.append(new_node)
                         self.moves += 1
+                    # multiply the rows and columns by 2 to get the capture position (to leap over the opponent's piece)
+                    capture_row, capture_col = row + 2 * move[0], col + 2 * move[1]
+                    original_row, original_col = row, col
                     # if the move tile is already occupied, check if it is the opponent's tile
-                    elif self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
-                        # multiply the rows and columns by 2 to get the capture position (to leap over the opponent's piece)
-                        capture = (move[0] * 2, move[1] * 2)
-                        capture_row, capture_col = rows[count] + capture[0], cols[count] + capture[1]
+                    capture = None
+                    if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
+                        capture = True
+                    while capture == True and self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
+                        #print("while loop")
                         # check if the capture position is within the board and if the space is empty
                         if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
-                            new_state, move_tuple = make_capture(new_state, move_row, move_col, capture_row, capture_col)
+                            #print("Capture position is empty")
+                            new_state, move_tuple = make_capture(new_state, original_row, original_col, move_row, move_col, capture_row, capture_col)
                             new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1, move_tuple)
                             self.children.append(new_node)
                             self.captures += 1
-                count += 1
+                            original_row, original_col = capture_row, capture_col
+                            #print(self.index_to_coordinate(original_row, original_col))
+                            move_row, move_col = capture_row + move[0], capture_col + move[1]
+                            capture_row, capture_col = col + 2 * move[0] * count, row + 2 * move[1] * count
+                            #if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
+                                #print("Move:")
+                                #print(self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent)
+                                #print(self.index_to_coordinate(move_row, move_col))
+                            #if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
+                                #print("Capture:")
+                                ##print(self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O")
+                                #print(self.index_to_coordinate(capture_row, capture_col))
+                            count += 1
+                        else:
+                            capture = False
             return
 
         def is_within_bounds(self, row, col, state):

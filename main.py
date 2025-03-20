@@ -28,18 +28,23 @@ def main():
     game = Tukvnanawopi(player=player, time_limit=10, state=board_state)
     #print(game.root.children)
 
-    # print("Initial Board:")
-    # print(state_separated)
-    game.root.possible_states()
-    # print(f"Possible moves: {game.root.moves}")
-    # print(f"Capture moves: {game.root.captures}")
+    print("Initial Board:")
+    print(board_state)
+    #game.root.possible_states()
+    #print(f"Possible moves: {game.root.moves}")
+    #print(f"Capture moves: {game.root.captures}")
     # #print(game.root.children)
 
-    evaluation, best_move = game.minimax(game.root, depth=10, maximizing_player=True)
+    evaluation, best_move = game.minimax(game.root, depth=20, maximizing_player=True)
+    print(f"Possible moves: {game.root.moves}")
+    print(f"Capture moves: {game.root.captures}")
     # 
     #print("Best move is:", best_move, evaluation)
 
-    print(f'{best_move[0]}-{best_move[1]}')
+    if best_move is None:
+        print("No moves available")
+    else:
+        print(f'{best_move[0]}-{best_move[1]}')
 
 if __name__ == "__main__":
     main()
