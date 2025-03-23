@@ -59,7 +59,7 @@ class Tukvnanawopi:
                 # made a modification here so that make_move will return the move that resulted in the new state
                 original_row, original_col = row, col
                 original_coord = self.index_to_coordinate(original_row, original_col)
-                new_coord = self.index_to_coordinate(row, col)
+                new_coord = self.index_to_coordinate(move_row, move_col)
                 ### print(f"Making move for {player} from {original_coord} to {new_coord}")
                 move_tuple = (original_coord, new_coord) # tuple representing which piece was moved
                 new_state[move_row, move_col] = player
@@ -116,7 +116,7 @@ class Tukvnanawopi:
             opponent = get_opponent()
             for row, col in zip(rows,cols):
                 for move in moves:
-                    print(move)
+                    #print(move)
                     count = 2
                     new_state = state.copy()
                     # keep track of the col and row for the move
