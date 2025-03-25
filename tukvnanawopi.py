@@ -65,8 +65,8 @@ class Tukvnanawopi:
                 new_state[move_row, move_col] = player
                 new_state[row, col] = "O"
                 
-                print("Possible State:")
-                print(new_state)
+                # print("Possible State:")
+                # print(new_state)
                 return new_state, move_tuple
 
 
@@ -91,17 +91,17 @@ class Tukvnanawopi:
                 move_coord = self.index_to_coordinate(move_row, move_col)
                 capture_coord = self.index_to_coordinate(capture_row, capture_col)
                 
-                print(f"Making capture for {player} from {original_coord} to {capture_coord}, capturing opponent at {move_coord}")
+                # print(f"Making capture for {player} from {original_coord} to {capture_coord}, capturing opponent at {move_coord}")
                 
                 new_state[capture_row, capture_col] = player
                 new_state[move_row, move_col] = "O"
                 new_state[row, col] = "O"
                 #print(original_coord)
                 
-                print("Possible State:")
-                print(new_state)
+                # print("Possible State:")
+                # print(new_state)
                 
-                move_tuple = (original_coord, move_coord, capture_coord)
+                move_tuple = (original_coord, capture_coord, move_coord)
                 return new_state, move_tuple
 
             # get the opposite of the current player
@@ -192,20 +192,22 @@ class Tukvnanawopi:
         move on row 5 will be represented as C5-E5'
         '''
 
-        if self.is_terminal(node.state, self.player) or depth==0:
+        if self.is_terminal(node.state, self.player):
+            return self.utility(node), node.move
+        if depth == 0:
             return self.evaluate(node), node.move
-        
+
         if maximizing_player:
             max_eval = -math.inf
             best_move = None
             node.possible_states() # generate the children of the 
             for child in node.children:
-                eval, _ = self.minimax(child, False, alpha, beta) # call minimax for minimizing player
+                eval, _ = self.minimax(child, depth-1, False, alpha, beta) # call minimax for minimizing player
                 if eval > max_eval:
                     max_eval = eval
                     best_move = child.move
                 alpha = max(alpha, eval)
-                if beta <= alpha: #prune
+                if max_eval >= beta: #prune
                     break
             return max_eval, best_move
         else:
@@ -213,16 +215,14 @@ class Tukvnanawopi:
             best_move = None
             node.possible_states() # generate the children of the 
             for child in node.children:
-                eval, _ = self.minimax(child, True, alpha, beta) # call minimax for minimizing player
+                eval, _ = self.minimax(child, depth-1, True, alpha, beta) # call minimax for minimizing player
                 if eval < min_eval:
                     min_eval = eval
                     best_move = child.move
                 beta = min(alpha, eval)
-                if beta <= alpha: #prune
+                if min_eval <= alpha: #prune
                     break
             return min_eval, best_move
-
-        
 
     def is_terminal(self, state, player: Player) -> bool:
         white_pieces = np.count_nonzero(state == "W")
@@ -276,9 +276,9 @@ class Tukvnanawopi:
         opponent_captures = sum(child.captures for child in node.children)
 
         # Assign weights to each factor
-        piece_weight = 1.0
-        move_weight = 0.5
-        capture_weight = 2.0
+        piece_weight = 0.6
+        move_weight = 0.15
+        capture_weight = 0.25
 
         player_score = (player_count * piece_weight) + (player_moves * move_weight) + (player_captures * capture_weight)
         opponent_score = (opponent_count * piece_weight) + (opponent_moves * move_weight) + (opponent_captures * capture_weight)
@@ -292,8 +292,17 @@ class Tukvnanawopi:
     def utility(self, node: Node) -> float:
         if self.is_terminal(node.state, self.player):
             opponent = "W" if self.player == "B" else "B"
-            if np.count_nonzero(node.state == self.player) > 0:
-                return 1.0 
-            elif np.count_nonzero(node.state == opponent) > 0:
-                return -1.0
+
+            # Count remaining pieces for both players
+            player_pieces = np.count_nonzero(node.state == self.player)
+            opponent_pieces = np.count_nonzero(node.state == opponent)
+
+            # Check if the player has more pieces (win)
+            if player_pieces > 0 and opponent_pieces == 0:
+                return 1.0  # Win for the current player
+            # Check if the opponent has more pieces (loss)
+            elif opponent_pieces > 0 and player_pieces == 0:
+                return -1.0  # Loss for the current player
+            # Check if no valid moves left (draw or tie)
+
         return 0.0
