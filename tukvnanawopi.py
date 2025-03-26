@@ -2,6 +2,7 @@ import time
 from player import Player
 import numpy as np
 import math
+import copy
 
 
 class Tukvnanawopi:
@@ -118,12 +119,13 @@ class Tukvnanawopi:
                 for move in moves:
                     #print(move)
                     count = 2
-                    new_state = state.copy()
+                    new_state = copy.deepcopy(state)
                     # keep track of the col and row for the move
                     move_row, move_col = row + move[0], col + move[1]
                     # check if the move is within the board and if the space is empty
                     #print(self.is_within_bounds(move_row, move_col, state))
                     #print(state[move_row, move_col] == "O")
+                    origin = self.index_to_coordinate(row, col)
                     if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == "O":
                         new_state, move_tuple = make_move(new_state, row, col, move_row, move_col)
                         new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1, move_tuple)
@@ -145,23 +147,18 @@ class Tukvnanawopi:
                         if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
                             #print("Capture position is empty")
                             new_state, move_tuple = make_capture(new_state, original_row, original_col, move_row, move_col, capture_row, capture_col)
-                            new_node = Tukvnanawopi.Node(new_state, opponent, self, self.depth + 1, move_tuple)
+                            end = move_tuple[1]
+                            #print(origin, end)
+                            move_tuple = (origin, end)
+                            #new_state = copy.deepcopy(new_state)
+                            #print(new_state)
+                            new_node = Tukvnanawopi.Node(copy.deepcopy(new_state), opponent, self, self.depth + 1, move_tuple)
+                            #print(new_node.state)
                             self.children.append(new_node)
                             self.captures += 1
                             original_row, original_col = capture_row, capture_col
-                            #print(self.index_to_coordinate(original_row, original_col))
                             move_row, move_col = capture_row + move[0], capture_col + move[1]
                             capture_row, capture_col = row + 2 * move[0] * count, col + 2 * move[1] * count
-                            #print(self.index_to_coordinate(capture_row, capture_col))
-                            #print(capture_col,capture_row)
-                            #if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
-                                #print("Move:")
-                                #print(self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent)
-                                #print(self.index_to_coordinate(move_row, move_col))
-                            #if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
-                                #print("Capture:")
-                                #print(self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O")
-                                #print(self.index_to_coordinate(capture_row, capture_col))
                             count += 1
                         else:
                             capture = False
