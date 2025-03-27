@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+build() {
+  ARG=$1
+  # Clean up the environment
+  if [[ "${ARG,,}" == "clean" ]]; then
+    echo "Cleaning environment..."
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+      deactivate
+    fi
+    rm -rf temp
+  else
+    echo "Building environment..."
+    python3 -m venv temp --clear
+    echo "Sourcing virtual environment..."
+    source temp/bin/activate
+    echo "Installing dependencies..."
+    pip install numpy
+  fi
+}
+
+build "$1"

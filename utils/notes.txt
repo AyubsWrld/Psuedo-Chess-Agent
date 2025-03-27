@@ -1,0 +1,7 @@
+Goal : Allow proff to be able to run our program on the student server. Create python environment and install numpy.
+
+Requirement : Should be easy to use and fool-proof
+Requirement : Should allow the caller of the script to automatically exit the environment and free resources after. 
+Requirement : Should work on the student server ( regardless of the location of the bash script ), although this can be hardcoded. Since we SSH onto it it implies that the resources will always be located in the same place. 
+
+Tool : bash script , venv. 
