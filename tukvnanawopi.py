@@ -263,14 +263,14 @@ class Tukvnanawopi:
     def evaluate(self, node: Node) -> float:
         opponent = "W" if self.player == "B" else "B"
 
-        player_count = np.count_nonzero(node.state == self.player)
-        opponent_count = np.count_nonzero(node.state == opponent)
+        player_count = max(np.count_nonzero(node.state == self.player), 1)
+        opponent_count = max(np.count_nonzero(node.state == opponent), 1)
 
-        player_moves = node.moves
-        opponent_moves = sum(child.moves for child in node.children)
+        player_moves = max(node.moves, 1)
+        opponent_moves = max(sum(child.moves for child in node.children), 1)
 
-        player_captures = node.captures
-        opponent_captures = sum(child.captures for child in node.children)
+        player_captures = max(node.captures, 1)
+        opponent_captures = max(sum(child.captures for child in node.children), 1)
 
         # Assign weights to each factor
         piece_weight = 0.6
@@ -282,9 +282,8 @@ class Tukvnanawopi:
 
         # Normalize between -1 and 1
         total_score = player_score - opponent_score
-        max_possible_score = (piece_weight * 20) + (move_weight * 20) + (capture_weight * 20)  # Approximate max values
 
-        return total_score / max_possible_score
+        return total_score
 
     def utility(self, node: Node) -> float:
         if self.is_terminal(node.state, self.player):
@@ -296,10 +295,10 @@ class Tukvnanawopi:
 
             # Check if the player has more pieces (win)
             if player_pieces > 0 and opponent_pieces == 0:
-                return 1.0  # Win for the current player
+                return math.inf  # Win for the current player
             # Check if the opponent has more pieces (loss)
             elif opponent_pieces > 0 and player_pieces == 0:
-                return -1.0  # Loss for the current player
+                return -math.inf  # Loss for the current player
             # Check if no valid moves left (draw or tie)
 
         return 0.0
