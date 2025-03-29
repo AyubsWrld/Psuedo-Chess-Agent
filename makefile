@@ -1,3 +1,7 @@
+.PHONY: all build run clean
+
+all: build run
+
 # Build the virtual environment and install requirements
 build:
 	chmod +x build.sh;
