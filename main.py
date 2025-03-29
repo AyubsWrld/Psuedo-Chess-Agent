@@ -28,7 +28,7 @@ def main():
     TIMELIMIT = 10.0
     game = Tukvnanawopi(player=player, time_limit=TIMELIMIT, start_time=start_time, state=board_state)
 
-    evaluation, best_move = game.minimax(game.root, depth=6, maximizing_player=True)
+    evaluation, best_move = game.minimax(game.root, depth=250, maximizing_player=True)
 
     # print("Initial Board:")
     # print(board_state)
