@@ -15,6 +15,7 @@ build() {
     echo "Installing dependencies..."
     ./temp/bin/pip install numpy
     source ./temp/bin/activate
+    ./temp/bin/activate
   fi
 }
 
