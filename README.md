@@ -8,11 +8,6 @@ Install the project
 $ make build
 ```
 
-Activate virtual environment
-```
-$ source .venv/bin/activate
-```
-
 ## Usage
 
 Run the project
