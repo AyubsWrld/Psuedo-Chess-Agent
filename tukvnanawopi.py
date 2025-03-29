@@ -260,8 +260,8 @@ class Tukvnanawopi:
 
         # Assign weights to each factor
         piece_weight = 0.55 # material advantage
-        move_weight = 0.25 # mobility
-        capture_weight = 0.2 # caputures
+        move_weight = 0.2 # mobility
+        capture_weight = 0.25 # caputures
 
         player_score = (player_count * piece_weight) + (player_moves * move_weight) + (player_captures * capture_weight)
         opponent_score = (opponent_count * piece_weight) + (opponent_moves * move_weight) + (opponent_captures * capture_weight)
