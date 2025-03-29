@@ -10,7 +10,7 @@ $ make build
 
 Activate virtual environment
 ```
-$ source ./temp/bin/activate
+$ source .venv/bin/activate
 ```
 
 ## Usage
