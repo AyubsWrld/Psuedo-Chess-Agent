@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 build() {
-  ARG=$1
   # Clean up the environment
   if [[ "$1" == "clean" ]]; then
     echo "Cleaning environment..."

@@ -8,6 +8,11 @@ Install the project
 $ make build
 ```
 
+Activate virtual environment
+```
+$ source ./temp/bin/activate
+```
+
 ## Usage
 
 Run the project
