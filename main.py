@@ -3,11 +3,9 @@ from tukvnanawopi import Tukvnanawopi
 from player import Player
 import numpy as np
 import time
-from utils.logger import log, LogLevel
 
 
 def main():
-    start_time = time.time()
     if len(sys.argv) != 3:
         print("Usage: tukvnanawopi file player")
         print("""Where: file is the name of a file that contains the board configuration\n       player is either B or W, indicating which player the agent should assume""")
@@ -18,6 +16,7 @@ def main():
     if player_char not in ('B', 'W'):
         print("Error: Player must be 'B' or 'W'")
         return
+    start_time = time.time()
 
     with open(board_file, 'r') as f:
         board_state = [list(line.split()) for line in f.readlines()]
@@ -38,6 +37,6 @@ def main():
     else:
         print(f'{best_move[0]}-{best_move[1]}')
 
+
 if __name__ == "__main__":
     main()
-

@@ -14,6 +14,7 @@ build() {
     echo "Sourcing virtual environment..."
     echo "Installing dependencies..."
     ./temp/bin/pip install numpy
+    chmod +x ./temp/bin/activate
     source ./temp/bin/activate
     ./temp/bin/activate
   fi
