@@ -3,7 +3,7 @@ AI Agent for playing 'tukvonowapi'
 
 ## Installation Steps
 
-Build the project
+Install the project
 ```
 $ make build
 ```
