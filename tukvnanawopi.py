@@ -42,7 +42,6 @@ class Tukvnanawopi:
         def check_moves(self, state, rows, cols, player):
             # check all possible moves for the current player
             # make a move based on the inputed rows and cols
-            
 
             def make_move(new_state, row, col, move_row, move_col):
                 """
@@ -57,17 +56,13 @@ class Tukvnanawopi:
                     - new_state (2D array): The updated game state after the move is made.
                     - move_tuple (tuple): A tuple representing the move made, containing the original and new coordinates of the piece.
                 """
-                # made a modification here so that make_move will return the move that resulted in the new state
+
                 original_row, original_col = row, col
                 original_coord = self.index_to_coordinate(original_row, original_col)
                 new_coord = self.index_to_coordinate(move_row, move_col)
-                ### print(f"Making move for {player} from {original_coord} to {new_coord}")
                 move_tuple = (original_coord, new_coord) # tuple representing which piece was moved
                 new_state[move_row, move_col] = player
                 new_state[row, col] = "O"
-                
-                # print("Possible State:")
-                # print(new_state)
                 return new_state, move_tuple
 
 
@@ -92,16 +87,10 @@ class Tukvnanawopi:
                 move_coord = self.index_to_coordinate(move_row, move_col)
                 capture_coord = self.index_to_coordinate(capture_row, capture_col)
                 
-                # print(f"Making capture for {player} from {original_coord} to {capture_coord}, capturing opponent at {move_coord}")
-                
                 new_state[capture_row, capture_col] = player
                 new_state[move_row, move_col] = "O"
                 new_state[row, col] = "O"
-                #print(original_coord)
-                
-                # print("Possible State:")
-                # print(new_state)
-                
+
                 move_tuple = (original_coord, capture_coord, move_coord)
                 return new_state, move_tuple
 
@@ -117,14 +106,11 @@ class Tukvnanawopi:
             opponent = get_opponent()
             for row, col in zip(rows,cols):
                 for move in moves:
-                    #print(move)
                     count = 2
                     new_state = copy.deepcopy(state)
                     # keep track of the col and row for the move
                     move_row, move_col = row + move[0], col + move[1]
                     # check if the move is within the board and if the space is empty
-                    #print(self.is_within_bounds(move_row, move_col, state))
-                    #print(state[move_row, move_col] == "O")
                     origin = self.index_to_coordinate(row, col)
                     if self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == "O":
                         new_state, move_tuple = make_move(new_state, row, col, move_row, move_col)
@@ -142,18 +128,13 @@ class Tukvnanawopi:
                         capture = True
                     # if a capture is possible, keep leaping over the opponent's pieces
                     while capture == True and self.is_within_bounds(move_row, move_col, state) and state[move_row, move_col] == opponent:
-                        #print("while loop")
                         # check if the capture position is within the board and if the space is empty
                         if self.is_within_bounds(capture_row, capture_col, state) and state[capture_row, capture_col] == "O":
-                            #print("Capture position is empty")
                             new_state, move_tuple = make_capture(new_state, original_row, original_col, move_row, move_col, capture_row, capture_col)
                             end = move_tuple[1]
-                            #print(origin, end)
                             move_tuple = (origin, end)
                             #new_state = copy.deepcopy(new_state)
-                            #print(new_state)
                             new_node = Tukvnanawopi.Node(copy.deepcopy(new_state), opponent, self, self.depth + 1, move_tuple)
-                            #print(new_node.state)
                             self.children.append(new_node)
                             self.captures += 1
                             original_row, original_col = capture_row, capture_col
@@ -167,12 +148,13 @@ class Tukvnanawopi:
         def is_within_bounds(self, row, col, state):
             return 0 <= row < state.shape[0] and 0 <= col < state.shape[1]
 
-    def __init__(self, player: Player, time_limit: float, state: np.ndarray):
+    def __init__(self, player: Player, time_limit: float, start_time: float, state: np.ndarray):
         self.player = player
         self.time_limit = time_limit
-        self.start_time = None
+        self.start_time = start_time
         self.state = state
         self.root = self.Node(state, player)
+        self.bestMove = None
 
     def minimax(self, node: Node, depth:int, maximizing_player: bool, alpha: float = -np.inf, beta: float = np.inf) -> int:
         '''
@@ -193,6 +175,9 @@ class Tukvnanawopi:
             return self.utility(node), node.move
         if depth == 0:
             return self.evaluate(node), node.move
+        time_spent = time.time() - self.start_time
+        if time_spent >= self.time_limit * 0.75:
+            return self.evaluate(node), node.move
 
         if maximizing_player:
             max_eval = -math.inf
@@ -206,6 +191,7 @@ class Tukvnanawopi:
                 alpha = max(alpha, eval)
                 if max_eval >= beta: #prune
                     break
+                self.bestMove = best_move
             return max_eval, best_move
         else:
             min_eval = math.inf
@@ -273,14 +259,13 @@ class Tukvnanawopi:
         opponent_captures = max(sum(child.captures for child in node.children), 1)
 
         # Assign weights to each factor
-        piece_weight = 0.6
-        move_weight = 0.15
-        capture_weight = 0.25
+        piece_weight = 0.55 # material advantage
+        move_weight = 0.25 # mobility
+        capture_weight = 0.2 # caputures
 
         player_score = (player_count * piece_weight) + (player_moves * move_weight) + (player_captures * capture_weight)
         opponent_score = (opponent_count * piece_weight) + (opponent_moves * move_weight) + (opponent_captures * capture_weight)
 
-        # Normalize between -1 and 1
         total_score = player_score - opponent_score
 
         return total_score

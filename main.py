@@ -2,7 +2,7 @@ import sys
 from tukvnanawopi import Tukvnanawopi
 from player import Player
 import numpy as np
-from utils.logger import log, LogLevel
+import time
 
 
 def main():
@@ -16,32 +16,27 @@ def main():
     if player_char not in ('B', 'W'):
         print("Error: Player must be 'B' or 'W'")
         return
+    start_time = time.time()
 
     with open(board_file, 'r') as f:
         board_state = [list(line.split()) for line in f.readlines()]
-    
+
     board_state = np.array(board_state, dtype=str)
     board_state = np.array([list(cell[0]) for cell in board_state])
 
     player = Player.BLACK if player_char == 'B' else Player.WHITE
-    game = Tukvnanawopi(player=player, time_limit=10, state=board_state)
+    TIMELIMIT = 10.0
+    game = Tukvnanawopi(player=player, time_limit=TIMELIMIT, start_time=start_time, state=board_state)
 
     evaluation, best_move = game.minimax(game.root, depth=6, maximizing_player=True)
-    # print(f"Possible moves: {game.root.moves}")
-    # print(f"Capture moves: {game.root.captures}")
-    #for child in game.root.children:
-        #print(f"Child: {child.move}")
-        #print(f"{child.state}")
-    # 
-    #print("Best move is:", best_move, evaluation)
 
-    print("Initial Board:")
-    print(board_state)
+    # print("Initial Board:")
+    # print(board_state)
     if best_move is None:
         print("No moves available")
     else:
         print(f'{best_move[0]}-{best_move[1]}')
 
+
 if __name__ == "__main__":
     main()
-
