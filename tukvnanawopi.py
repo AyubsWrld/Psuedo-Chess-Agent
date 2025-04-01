@@ -202,7 +202,7 @@ class Tukvnanawopi:
                 if eval < min_eval:
                     min_eval = eval
                     best_move = child.move
-                beta = min(alpha, eval)
+                beta = min(beta, eval)
                 if min_eval <= alpha: #prune
                     break
             return min_eval, best_move
