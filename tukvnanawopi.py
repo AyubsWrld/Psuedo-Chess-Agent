@@ -185,7 +185,7 @@ class Tukvnanawopi:
             node.possible_states() # generate the children of the 
             for child in node.children:
                 eval, _ = self.minimax(child, depth-1, False, alpha, beta) # call minimax for minimizing player
-                if eval > max_eval:
+                if eval >= max_eval:
                     max_eval = eval
                     best_move = child.move
                 alpha = max(alpha, eval)
@@ -199,7 +199,7 @@ class Tukvnanawopi:
             node.possible_states() # generate the children of the 
             for child in node.children:
                 eval, _ = self.minimax(child, depth-1, True, alpha, beta) # call minimax for minimizing player
-                if eval < min_eval:
+                if eval <= min_eval:
                     min_eval = eval
                     best_move = child.move
                 beta = min(beta, eval)

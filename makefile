@@ -6,6 +6,7 @@ all: build run
 build:
 	chmod +x build.sh;
 	./build.sh;
+	chmod +x tplay
 
 run:
 	./temp/bin/python3 main.py $(ARGS);
